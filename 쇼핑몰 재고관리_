@@ -1,0 +1,49 @@
+#include <stdio.h>
+
+int main() {
+    int n;  // 상품 개수
+    printf("상품 개수(종류) 입력: ");
+    scanf("%d", &n);
+
+    int in[100], out[100], stock[100];  // 입고, 판매, 재고 배열
+    int total_in = 0, total_out = 0;
+
+    // 입고 수량 입력
+    printf("상품 별 입고수량 입력: ");
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &in[i]);
+        total_in += in[i];
+    }
+
+    // 판매 수량 입력
+    printf("상품 별 판매수량 입력: ");
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &out[i]);
+        stock[i] = in[i] - out[i];
+        total_out += out[i];
+    }
+
+    // 재고량 출력
+    printf("총 판매량 : %d (판매율 %.2f%%)\n",
+           total_out,
+           (double)total_out / total_in * 100);
+
+    // 최대 판매, 최소 판매 찾기
+    int max_idx = 0, min_idx = 0;
+    for (int i = 1; i < n; i++) {
+        if (out[i] > out[max_idx]) max_idx = i;
+        if (out[i] < out[min_idx]) min_idx = i;
+    }
+
+    printf("가장 많이 판매된 상품 : ID %d, 판매량 %d\n", max_idx + 1, out[max_idx]);
+    printf("가장 적게 판매된 상품 : ID %d, 판매량 %d\n", min_idx + 1, out[min_idx]);
+
+    // 재고 부족 상품 출력
+    for (int i = 0; i < n; i++) {
+        if (stock[i] <= 2) {
+            printf("상품 ID %d : 재고부족(%d)\n", i + 1, stock[i]);
+        }
+    }
+
+    return 0;
+}
