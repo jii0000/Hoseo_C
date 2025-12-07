@@ -1,0 +1,53 @@
+#include <stdio.h>
+
+int main() {
+    int in[5]={0}, sold[5]={0};
+    int menu;
+
+    while (1) {
+        printf("[쇼핑몰 관리]\n");
+        printf("1. 입고  2. 판매  3. 상품현황  4. 종료\n> ");
+        scanf("%d", &menu);
+
+        if (menu == 1) {
+            printf("입고수량 입력 : 전체 1, 개별 2 > ");
+            int type; scanf("%d", &type);
+
+            if (type == 1) {
+                for (int i=0;i<5;i++){
+                    int x; scanf("%d", &x);
+                    in[i] += x;
+                }
+            } else {
+                int id, x;
+                printf("상품ID : "); scanf("%d",&id);
+                printf("입고수량 : "); scanf("%d",&x);
+                in[id-1] += x;
+            }
+        }
+        else if (menu == 2) {
+            printf("판매수량 입력 : 전체 1, 개별 2 > ");
+            int type; scanf("%d", &type);
+
+            if (type == 1) {
+                for(int i=0;i<5;i++){
+                    int x; scanf("%d",&x);
+                    sold[i] += x;
+                }
+            } else {
+                int id, x;
+                printf("상품ID : "); scanf("%d",&id);
+                printf("판매수량 : "); scanf("%d",&x);
+                sold[id-1] += x;
+            }
+        }
+        else if (menu == 3) {
+            printf("재고수량 : ");
+            for (int i=0;i<5;i++)
+                printf("%d ", in[i]-sold[i]);
+            printf("\n");
+        }
+        else break;
+    }
+    return 0;
+}
