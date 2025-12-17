@@ -1,0 +1,131 @@
+#include <stdio.h>
+#include <string.h>
+
+#define WORD 16
+
+// ===== 함수 원형 선언 =====
+void getBinary(char bin[], char str[], int n);
+void complement2(char bin[], int n);
+int bin2dec(char bin[], int n);
+
+// ===== main =====
+int main()
+{
+    char input1[100];
+    char input2[100];
+    char op[10];
+
+    char binary1[WORD + 1] = {0};
+    char binary2[WORD + 1] = {0};
+
+    int result;
+    int num1, num2;
+
+    printf("<<<< Input >>>>\n");
+
+    fgets(input1, sizeof(input1), stdin);
+    fgets(op, sizeof(op), stdin);
+    fgets(input2, sizeof(input2), stdin);
+
+    // 개행 문자 제거
+    input1[strcspn(input1, "\n")] = 0;
+    op[strcspn(op, "\n")] = 0;
+    input2[strcspn(input2, "\n")] = 0;
+
+    getBinary(binary1, input1, WORD);
+    getBinary(binary2, input2, WORD);
+
+    num1 = bin2dec(binary1, WORD);
+    num2 = bin2dec(binary2, WORD);
+
+    switch(op[0]){
+        case '+': result = num1 + num2; break;
+        case '-': result = num1 - num2; break;
+        case '*': result = num1 * num2; break;
+        case '/': result = num1 / num2; break;
+        case '%': result = num1 % num2; break;
+        default :
+            printf("bad operator...\n");
+            return 0;
+    }
+
+    printf("%s(%d) %c %s(%d) = %d\n",
+           binary1, num1, op[0], binary2, num2, result);
+
+    return 0;
+}
+
+// ===== 문자열 → 16비트 이진수 =====
+void getBinary(char bin[], char str[], int n){
+    int len = strlen(str);
+    int isNegative = 0;
+    int i, j;
+
+    // 0으로 초기화
+    for(i = 0; i < n; i++)
+        bin[i] = '0';
+    bin[n] = '\0';
+
+    // 음수 처리
+    if(str[0] == '-'){
+        isNegative = 1;
+        str++;
+        len--;
+    }
+
+    // 오른쪽 정렬 복사
+    for(i = len - 1, j = n - 1; i >= 0 && j >= 0; i--, j--){
+        bin[j] = str[i];
+    }
+
+    // 음수면 2의 보수
+    if(isNegative){
+        complement2(bin, n);
+    }
+}
+
+// ===== 2의 보수 =====
+void complement2(char bin[], int n){
+    int i;
+    int carry = 1;
+
+    // 1의 보수
+    for(i = 0; i < n; i++){
+        bin[i] = (bin[i] == '0') ? '1' : '0';
+    }
+
+    // +1
+    for(i = n - 1; i >= 0; i--){
+        if(carry == 0) break;
+
+        if(bin[i] == '1'){
+            bin[i] = '0';
+        } else {
+            bin[i] = '1';
+            carry = 0;
+        }
+    }
+}
+
+// ===== 이진수 → 10진수 =====
+int bin2dec(char bin[], int n){
+    int i;
+    int value = 0;
+    int isNegative = (bin[0] == '1');
+
+    char temp[WORD + 1];
+    strcpy(temp, bin);
+
+    // 음수면 다시 2의 보수
+    if(isNegative){
+        complement2(temp, n);
+    }
+
+    for(i = 0; i < n; i++){
+        if(temp[n - 1 - i] == '1'){
+            value += (1 << i);
+        }
+    }
+
+    return isNegative ? -value : value;
+}
